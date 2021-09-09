@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect } from "react";
+
+import axios from "axios";
+
+const url = "https://pokeapi.co/api/v2/pokemon/";
 
 function App() {
+  const [pokeData, setPokeData] = useState();
+  const [searchPokeData, setSearchPokeData] = useState();
+
+  const handlerChange = (e) => {
+    setSearchPokeData(e.target.value);
+  };
+
+  useEffect(() => {
+    axios.get(url + searchPokeData).then((res) => {
+      setPokeData(res.data);
+      console.log(res.data);
+    });
+  }, [searchPokeData]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input
+        className="select"
+        value={searchPokeData}
+        onChange={handlerChange}
+      ></input>
+      {pokeData && (
+        <ul>
+          <li>Name: {pokeData.name}</li>
+          <li>Order: {pokeData.order}</li>
+          <li>weight: {pokeData.weight}</li>
+          <li>
+            Stats:{" "}
+            {pokeData.stats.map((stat, index) => {
+              <ul>
+                <li key={index}>
+                  {stat.name} and {stat.base_stat}
+                </li>
+              </ul>;
+            })}
+          </li>
+        </ul>
+      )}
     </div>
   );
 }
